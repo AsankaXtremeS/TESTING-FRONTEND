@@ -58,7 +58,7 @@ export default function UndergraduateSignupPage() {
             <p className="text-center text-xs text-slate-600 mt-4 mb-6">
               Already have an account?{" "}
               <Link
-                href="/login/student"
+                href="/login/undergraduate"
                 className="text-blue-600 font-medium hover:text-blue-700"
               >
                 Log in
