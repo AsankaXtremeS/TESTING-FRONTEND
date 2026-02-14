@@ -21,7 +21,7 @@ export default function EmployerSignupPage() {
               Join <span className="text-purple-700">Talvio</span>
             </h1>
             <p className="max-w-md text-sm leading-relaxed text-slate-700">
-              Sign up to start your smart job matching journey — unlock career-enhancing tools, apply for jobs, and access verified employers.
+              Connect with talented students and professionals, manage applications, and streamline your hiring process through Talvio.
             </p>
           </div>
           <div className="space-y-4">
