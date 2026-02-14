@@ -10,7 +10,7 @@ export default function ProfessionalLoginPage() {
   style={{ backgroundColor: "#E9F3FD" }}
 >
 
-      <div className="flex w-full max-w-6xl overflow-hidden bg-white shadow-lg h-175 rounded-3xl">
+      <div className="flex w-full max-w-6xl overflow-hidden bg-white shadow-lg h-[600px] rounded-3xl">
         {/* Left Panel */}
         <div
           className="flex flex-col justify-between w-1/2 p-12 border-r"
@@ -99,7 +99,7 @@ export default function ProfessionalLoginPage() {
 
             {/* OAuth Buttons */}
             <div className="space-y-3">
-              <button className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+              <button className="flex items-center justify-center w-full gap-2 px-4 py-2 transition-colors border border-gray-300 rounded-full hover:bg-gray-50">
                 <Image
                   src="/images/linkedin.svg"
                   alt="LinkedIn"
@@ -111,7 +111,7 @@ export default function ProfessionalLoginPage() {
                 </span>
               </button>
 
-              <button className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+              <button className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-300 rounded-full hover:bg-gray-50 transition-colors">
                 <Image
                   src="/images/google.svg"
                   alt="Google"
@@ -124,7 +124,7 @@ export default function ProfessionalLoginPage() {
               </button>
             </div>
 
-            <p className="mt-6 text-sm text-center text-gray-600">
+            <p className="mt-5 text-sm text-center text-gray-600">
               Don&apos;t have a professional account?{" "}
               <Link
                 href="/register/professional"

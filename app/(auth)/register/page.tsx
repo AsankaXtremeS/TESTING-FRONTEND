@@ -7,7 +7,7 @@ export default function RegisterPage() {
          <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-blue-50 via-purple-50 to-blue-100">
       <div className="w-full max-w-5xl h-[600px] bg-white rounded-3xl shadow-2xl p-12 relative">
         {/* Close button */}
-        <Link href="/">
+          <Link href="/">
         <button className="absolute text-gray-400 top-6 right-6 hover:text-gray-600">
           <X className="w-6 h-6" />
         </button>

@@ -9,7 +9,7 @@ export default function UndergraduateLoginPage() {
       className="flex items-center justify-center min-h-screen p-4"
       style={{ backgroundColor: "#E9F3FD" }}
     >
-      <div className="w-full max-w-6xl h-[700px] bg-white rounded-3xl shadow-lg overflow-hidden flex">
+      <div className="w-full max-w-6xl h-[600px] bg-white rounded-3xl shadow-lg overflow-hidden flex">
         {/* Left Panel */}
         <div
           className="flex flex-col justify-between w-1/2 p-12 border-r"
@@ -98,7 +98,7 @@ export default function UndergraduateLoginPage() {
 
             {/* OAuth Buttons */}
             <div className="space-y-3">
-              <button className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+              <button className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-300 rounded-full hover:bg-gray-50 transition-colors">
                 <Image
                   src="/images/linkedin.svg"
                   alt="LinkedIn"
@@ -110,7 +110,7 @@ export default function UndergraduateLoginPage() {
                 </span>
               </button>
 
-              <button className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+              <button className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-300 rounded-full hover:bg-gray-50 transition-colors">
                 <Image
                   src="/images/google.svg"
                   alt="Google"
@@ -123,7 +123,7 @@ export default function UndergraduateLoginPage() {
               </button>
             </div>
 
-            <p className="mt-6 text-sm text-center text-gray-600">
+            <p className="mt-4 text-sm text-center text-gray-600">
               Don&apos;t have an account?{" "}
               <Link
                 href="/register/undergraduate"
