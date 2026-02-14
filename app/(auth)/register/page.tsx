@@ -1,15 +1,13 @@
-// app/(auth)/login/page.tsx
-
-import Link from 'next/link';
+import Link from "next/link";
 import { GraduationCap, User, Building2, X } from 'lucide-react';
 import { Button } from '../../../components/ui/SignButton';
 
-export default function LoginPage() {
-  return (
-    <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-blue-50 via-purple-50 to-blue-100">
+export default function RegisterPage() {
+    return (
+         <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-blue-50 via-purple-50 to-blue-100">
       <div className="w-full max-w-5xl h-[600px] bg-white rounded-3xl shadow-2xl p-12 relative">
         {/* Close button */}
-         <Link href="/"> 
+        <Link href="/">
         <button className="absolute text-gray-400 top-6 right-6 hover:text-gray-600">
           <X className="w-6 h-6" />
         </button>
@@ -18,11 +16,11 @@ export default function LoginPage() {
         {/* Header */}
         <div className="mb-12 text-center">
           <h1 className="mb-4 text-2xl font-bold text-violet-700">Talvio</h1>
-          <h2 className="mb-4 text-5xl font-bold text-gray-900">Sign In</h2>
+          <h2 className="mb-4 text-5xl font-bold text-gray-900">Sign Up</h2>
           <p className="text-gray-600">
-            Dont have an account?{' '}
-            <Link href="/register" className="font-medium text-blue-600 hover:text-blue-700">
-              Sign up
+            Already have an account?{' '}
+            <Link href="/login" className="font-medium text-blue-600 hover:text-blue-700">
+              Sign in
             </Link>
           </p>
         </div>
@@ -38,8 +36,8 @@ export default function LoginPage() {
             <p className="flex-grow mb-8 text-sm text-gray-600">
               Kick-start your career with smart job matching
             </p>
-            <Link href="/login/undergraduate" className="w-full">
-              <Button>Sign in</Button>
+            <Link href="/register/undergraduate" className="w-full">
+              <Button>Register</Button>
             </Link>
           </div>
 
@@ -52,8 +50,8 @@ export default function LoginPage() {
             <p className="flex-grow mb-8 text-sm text-gray-600">
               Find roles that match your skills instantly
             </p>
-            <Link href="/login/professional" className="w-full">
-              <Button>Sign in</Button>
+            <Link href="/register/professional" className="w-full">
+              <Button>Register</Button>
             </Link>
           </div>
 
@@ -66,12 +64,12 @@ export default function LoginPage() {
             <p className="flex-grow mb-8 text-sm text-gray-600">
               Hire verified talent faster with AI
             </p>
-            <Link href="/login/employer" className="w-full">
-              <Button>Sign in</Button>
+            <Link href="/register/employer" className="w-full">
+              <Button>Register</Button>
             </Link>
           </div>
         </div>
       </div>
     </div>
-  );
+    )
 }

@@ -6,14 +6,14 @@ import LoginForm from "../undergraduate/LoginForm"
 export default function ProfessionalLoginPage() {
   return (
     <div
-  className="min-h-screen flex items-center justify-center p-4"
+  className="flex items-center justify-center min-h-screen p-4"
   style={{ backgroundColor: "#E9F3FD" }}
 >
 
-      <div className="w-full max-w-6xl h-[600px] bg-white rounded-3xl shadow-lg overflow-hidden flex">
+      <div className="flex w-full max-w-6xl overflow-hidden bg-white shadow-lg h-175 rounded-3xl">
         {/* Left Panel */}
         <div
-          className="w-1/2 p-12 flex flex-col justify-between border-r"
+          className="flex flex-col justify-between w-1/2 p-12 border-r"
           style={{
             background: `
       linear-gradient(
@@ -27,21 +27,21 @@ export default function ProfessionalLoginPage() {
         >
           {/* Brand */}
           <div>
-            <h1 className="text-3xl font-bold text-violet-700 tracking-tight">
+            <h1 className="text-3xl font-bold tracking-tight text-violet-700">
               Talvio
             </h1>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="mt-1 text-sm text-slate-500">
               Career & Opportunity Platform
             </p>
           </div>
 
           {/* Main Message */}
           <div>
-            <h2 className="text-xl font-semibold text-slate-800 mb-4">
+            <h2 className="mb-4 text-xl font-semibold text-slate-800">
               Take the next step in your career.
             </h2>
 
-            <p className="text-sm text-slate-600 mb-8 leading-relaxed">
+            <p className="mb-8 text-sm leading-relaxed text-slate-600">
               Discover full-time opportunities, connect with verified employers,
               and manage your job applications in one place.
             </p>
@@ -68,16 +68,18 @@ export default function ProfessionalLoginPage() {
         </div>
 
         {/* Right Panel */}
-        <div className="w-1/2 p-10 relative overflow-y-auto">
-          <button className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+        <div className="relative w-1/2 p-10 overflow-y-auto">
+          <Link href="/login"> 
+          <button className="absolute text-gray-400 top-4 right-4 hover:text-gray-600">
             <X className="w-5 h-5" />
           </button>
+          </Link>
 
           <div className="max-w-md mx-auto">
-            <h2 className="text-2xl font-bold text-gray-900 mb-1">
+            <h2 className="mb-1 text-2xl font-bold text-gray-900">
               Professional Login
             </h2>
-            <p className="text-gray-500 text-sm mb-6">
+            <p className="mb-6 text-sm text-gray-500">
               Access your job dashboard
             </p>
 
@@ -89,7 +91,7 @@ export default function ProfessionalLoginPage() {
                 <div className="w-full border-t border-gray-200"></div>
               </div>
               <div className="relative flex justify-center text-xs">
-                <span className="px-3 bg-white text-gray-400 uppercase tracking-wide">
+                <span className="px-3 tracking-wide text-gray-400 uppercase bg-white">
                   Or continue with
                 </span>
               </div>
@@ -104,7 +106,7 @@ export default function ProfessionalLoginPage() {
                   width={18}
                   height={18}
                 />
-                <span className="text-gray-700 font-medium text-sm">
+                <span className="text-sm font-medium text-gray-700">
                   LinkedIn
                 </span>
               </button>
@@ -116,17 +118,17 @@ export default function ProfessionalLoginPage() {
                   width={18}
                   height={18}
                 />
-                <span className="text-gray-700 font-medium text-sm">
+                <span className="text-sm font-medium text-gray-700">
                   Google
                 </span>
               </button>
             </div>
 
-            <p className="text-center text-sm text-gray-600 mt-6">
+            <p className="mt-6 text-sm text-center text-gray-600">
               Don&apos;t have a professional account?{" "}
               <Link
                 href="/register/professional"
-                className="text-indigo-600 hover:text-indigo-700 font-medium"
+                className="font-medium text-indigo-600 hover:text-indigo-700"
               >
                 Create professional account
               </Link>
@@ -141,7 +143,7 @@ export default function ProfessionalLoginPage() {
 function Feature({ icon, text }: { icon: React.ReactNode; text: string }) {
   return (
     <div className="flex items-center gap-3">
-      <div className="w-9 h-9 bg-white border rounded-lg flex items-center justify-center shadow-sm">
+      <div className="flex items-center justify-center bg-white border rounded-lg shadow-sm w-9 h-9">
         {icon}
       </div>
       <span className="text-sm text-slate-700">{text}</span>
