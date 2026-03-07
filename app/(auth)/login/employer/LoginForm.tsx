@@ -1,8 +1,8 @@
 "use client"
-
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useRouter } from "next/navigation";
 
 const schema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -19,6 +19,7 @@ export default function LoginForm() {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
+  const router = useRouter();
 
   const onSubmit = async (data: FormData) => {
     console.log(data)
@@ -26,65 +27,68 @@ export default function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 
-      <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1">
-          Company Email
-        </label>
-        <input
-          {...register("email")}
-          type="email"
-          placeholder="company@email.com"
-          className="w-full px-4 py-2.5 text-sm text-slate-900 bg-white border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
-        {errors.email && (
-          <p className="text-red-500 text-xs mt-1">
-            {errors.email.message}
+        <div>
+          <label className="block mb-1 text-sm font-medium text-slate-700">
+            Company Email
+          </label>
+          <input
+            {...register("email")}
+            type="email"
+            placeholder="company@email.com"
+            className="w-full px-4 py-2.5 text-sm text-slate-900 bg-white border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+          {errors.email && (
+            <p className="mt-1 text-xs text-red-500">
+              {errors.email.message}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className="block mb-1 text-sm font-medium text-slate-700">
+            Password
+          </label>
+          <input
+            {...register("password")}
+            type="password"
+            placeholder="••••••••"
+            className="w-full px-4 py-2.5 text-sm text-slate-900 bg-white border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+          {errors.password && (
+            <p className="mt-1 text-xs text-red-500">
+              {errors.password.message}
+            </p>
+          )}
+        </div>
+
+        <div className="flex items-center justify-between text-sm">
+          <label className="flex items-center gap-2">
+            <input type="checkbox" className="w-4 h-4" />
+            <span className="text-slate-600">Remember me</span>
+          </label>
+
+          <p className="text-sm text-indigo-600 cursor-pointer" onClick={() => router.push("/forgot-password")}>
+            Forgot Password?
           </p>
-        )}
-      </div>
+        </div>
 
-      <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1">
-          Password
-        </label>
-        <input
-          {...register("password")}
-          type="password"
-          placeholder="••••••••"
-          className="w-full px-4 py-2.5 text-sm text-slate-900 bg-white border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
-        {errors.password && (
-          <p className="text-red-500 text-xs mt-1">
-            {errors.password.message}
-          </p>
-        )}
-      </div>
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full text-white py-2.5 rounded-full font-medium transition disabled:opacity-50"
+          style={{
+            background:
+              "linear-gradient(90deg, #5F33E2 0%, #2563EB 60%, #2563EB 100%)",
+          }}
+        >
+          {isSubmitting ? "Signing in..." : "Login"}
+        </button>
 
-      <div className="flex items-center justify-between text-sm">
-        <label className="flex items-center gap-2">
-          <input type="checkbox" className="w-4 h-4" />
-          <span className="text-slate-600">Remember me</span>
-        </label>
+      </form>
 
-        <a href="#" className="text-indigo-600 hover:text-indigo-700">
-          Forgot password?
-        </a>
-      </div>
-
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full text-white py-2.5 rounded-full font-medium transition disabled:opacity-50"
-        style={{
-          background:
-            "linear-gradient(90deg, #5F33E2 0%, #2563EB 60%, #2563EB 100%)",
-        }}
-      >
-        {isSubmitting ? "Signing in..." : "Login"}
-      </button>
-
-    </form>
+    </>
   )
 }
