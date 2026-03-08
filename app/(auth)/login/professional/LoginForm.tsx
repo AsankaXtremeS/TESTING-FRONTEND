@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
-import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation";
+import { authService } from "@/lib/auth.service";
+import { useAuth } from "@/context/AuthContext";
+import { jwtDecode } from "jwt-decode";
 
 const loginSchema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -12,30 +15,47 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>
 
+const redirectMap: Record<string, string> = {
+  STUDENT:      '/users/undergraduate',
+  PROFESSIONAL: '/users/professional',
+  EMPLOYER:     '/users/employer',
+  ADMIN:        '/admin',
+};
+
 export default function LoginForm() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   })
-  const [isForgotPasswordOpen, setForgotPasswordOpen] = useState(false);
+  const { setUser, setAccessToken } = useAuth();
   const router = useRouter();
 
   const onSubmit = async (data: LoginFormData) => {
-    console.log(data)
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    try {
+      const { accessToken } = await authService.login(data);
+      const decoded = jwtDecode<{ userId: string; role: string }>(accessToken);
+      setUser({ id: decoded.userId, role: decoded.role as any, email: data.email });
+      setAccessToken(accessToken);
+      router.push(redirectMap[decoded.role] ?? '/');
+    } catch (error: any) {
+      setError('root', {
+        type: 'manual',
+        message: error.message || 'Login failed. Check your credentials.',
+      });
+    }
   }
-
-  const handleForgotPasswordSubmit = (data: { email: string }) => {
-    console.log("Forgot Password Data:", data);
-    setForgotPasswordOpen(false);
-  };
 
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+
+        {errors.root && (
+          <p className="text-sm text-center text-red-500">{errors.root.message}</p>
+        )}
 
         <div>
           <label className="block mb-1 text-sm font-medium text-slate-700">
@@ -91,7 +111,7 @@ export default function LoginForm() {
               "linear-gradient(90deg, #5F33E2 0%, #2563EB 60%, #2563EB 100%)",
           }}
         >
-          {isSubmitting ? "Logging in..." : "Login"}
+          {isSubmitting ? "Signing in..." : "Login"}
         </button>
 
       </form>

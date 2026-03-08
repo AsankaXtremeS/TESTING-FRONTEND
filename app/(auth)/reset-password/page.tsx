@@ -7,6 +7,7 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useSearchParams } from "next/navigation"
 import { Eye, EyeOff, ArrowLeft, CheckCircle } from "lucide-react"
+import { authService } from "@/lib/auth.service"
 
 const schema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -52,10 +53,12 @@ export default function ResetPasswordPage() {
   })
 
   const onSubmit = async (data: FormData) => {
-    // TODO: Replace with actual API call — send token + data.password
-    console.log("token:", token, "password:", data.password)
-    await new Promise((res) => setTimeout(res, 1000))
-    setSuccess(true)
+    try {
+      await authService.resetPassword(token ?? '', data.password)
+      setSuccess(true)
+    } catch (error: any) {
+      console.error('Reset failed:', error.message)
+    }
   }
 
   const strength = getStrength(pwValue)

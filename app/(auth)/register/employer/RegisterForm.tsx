@@ -2,18 +2,23 @@
 
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Upload, Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
+import { authService } from "@/lib/auth.service"
 
 const schema = z
   .object({
     companyName: z.string().min(2, "Company name is required"),
     email: z.string().email("Invalid email"),
-    password: z.string().min(6, "Min 6 characters"),
+    password: z
+      .string()
+      .min(8, "Min 8 characters")
+      .regex(/[A-Z]/, "Must contain an uppercase letter")
+      .regex(/[0-9]/, "Must contain a number"),
     confirmPassword: z.string(),
     businessRegistration: z.any().optional(),
     rememberMe: z.boolean().optional(),
@@ -52,6 +57,7 @@ export default function EmployerSignupForm() {
   const [showPw, setShowPw] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [pwValue, setPwValue] = useState("")
+  const fileRef = useRef<HTMLInputElement>(null)
 
   const {
     register,
@@ -64,29 +70,28 @@ export default function EmployerSignupForm() {
   const onSubmit = async (data: FormData) => {
     setIsLoading(true)
     try {
+      const file = fileRef.current?.files?.[0]
+      if (!file) {
+        alert("Please upload your business registration PDF.")
+        setIsLoading(false)
+        return
+      }
       const formData = new FormData()
       formData.append("companyName", data.companyName)
       formData.append("email", data.email)
       formData.append("password", data.password)
-      formData.append("rememberMe", String(data.rememberMe || false))
-      if (data.businessRegistration && data.businessRegistration[0]) {
-        formData.append("businessRegistration", data.businessRegistration[0])
-      }
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/register/employer`, {
-        method: "POST",
-        body: formData,
-      })
-      const result = await response.json()
-      if (response.ok) {
-        console.log("Registration successful:", result)
-        alert("Registration successful!")
+      formData.append("confirmPassword", data.confirmPassword)
+      formData.append("registrationFile", file)
+      const result = await authService.registerEmployer(formData)
+      if (result?.userId) {
+        alert("Registration submitted! Awaiting admin approval.")
         window.location.href = "/login/employer"
       } else {
-        alert(result.error || "Registration failed")
+        alert(result?.message || "Registration failed. Please check your details and try again.")
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error:", error)
-      alert("An error occurred. Please try again.")
+      alert(error.message || "An error occurred. Please try again.")
     } finally {
       setIsLoading(false)
     }
@@ -95,6 +100,7 @@ export default function EmployerSignupForm() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) setFileName(file.name)
+    else setFileName("")
   }
 
   const handleDrop = (e: React.DragEvent<HTMLLabelElement>) => {
@@ -103,11 +109,10 @@ export default function EmployerSignupForm() {
     const files = e.dataTransfer.files
     if (files && files[0]) {
       setFileName(files[0].name)
-      const input = document.getElementById("fileUpload") as HTMLInputElement
-      if (input) {
+      if (fileRef.current) {
         const dataTransfer = new DataTransfer()
         dataTransfer.items.add(files[0])
-        input.files = dataTransfer.files
+        fileRef.current.files = dataTransfer.files
       }
     }
   }
@@ -222,10 +227,10 @@ export default function EmployerSignupForm() {
         </label>
         <div className="relative">
           <input
-            {...register("businessRegistration")}
+            ref={fileRef}
             type="file"
             id="fileUpload"
-            accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+            accept=".pdf"
             onChange={handleFileChange}
             className="hidden"
           />
@@ -247,8 +252,7 @@ export default function EmployerSignupForm() {
                     type="button"
                     onClick={() => {
                       setFileName("")
-                      const input = document.getElementById("fileUpload") as HTMLInputElement
-                      if (input) input.value = ""
+                      if (fileRef.current) fileRef.current.value = ""
                     }}
                     className="ml-2 px-2 py-0.5 text-xs text-red-600 border border-red-200 rounded hover:bg-red-50"
                   >

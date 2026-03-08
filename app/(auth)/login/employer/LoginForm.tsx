@@ -3,6 +3,9 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation";
+import { authService } from "@/lib/auth.service";
+import { useAuth } from "@/context/AuthContext";
+import { jwtDecode } from "jwt-decode";
 
 const schema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -11,24 +14,45 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>
 
+const redirectMap: Record<string, string> = {
+  STUDENT:      '/users/undergraduate',
+  PROFESSIONAL: '/users/professional',
+  EMPLOYER:     '/users/employer',
+  ADMIN:        '/admin',
+};
+
 export default function LoginForm() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
+  const { setUser, setAccessToken } = useAuth();
   const router = useRouter();
 
   const onSubmit = async (data: FormData) => {
-    console.log(data)
-    await new Promise((res) => setTimeout(res, 1000))
+    try {
+      const { accessToken } = await authService.login(data);
+      const decoded = jwtDecode<{ userId: string; role: string }>(accessToken);
+      setUser({ id: decoded.userId, role: decoded.role as 'STUDENT' | 'PROFESSIONAL' | 'EMPLOYER' | 'ADMIN', email: data.email });
+      setAccessToken(accessToken);
+      router.push(redirectMap[decoded.role] ?? '/');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Login failed. Check your credentials.';
+      setError('root', { type: 'manual', message });
+    }
   }
 
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+
+        {errors.root && (
+          <p className="text-sm text-center text-red-500">{errors.root.message}</p>
+        )}
 
         <div>
           <label className="block mb-1 text-sm font-medium text-slate-700">

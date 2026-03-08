@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Mail, ArrowLeft, Send } from "lucide-react"
+import { authService } from "@/lib/auth.service"
 
 const schema = z.object({
   email: z.string().email("Enter a valid email address"),
@@ -26,10 +27,14 @@ export default function ForgotPasswordPage() {
   })
 
   const onSubmit = async (data: FormData) => {
-    // TODO: Replace with actual API call
-    await new Promise((res) => setTimeout(res, 1000))
-    setSentTo(data.email)
-    setSubmitted(true)
+    try {
+      await authService.forgotPassword(data.email)
+      setSentTo(data.email)
+      setSubmitted(true)
+    } catch {
+      setSentTo(data.email)
+      setSubmitted(true) // show success regardless to prevent email enumeration
+    }
   }
 
   return (

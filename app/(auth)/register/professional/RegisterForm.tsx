@@ -8,6 +8,7 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Eye, EyeOff } from "lucide-react"
 import Image from "next/image"
+import { authService } from "@/lib/auth.service"
 
 const schema = z
   .object({
@@ -59,8 +60,19 @@ export default function SignupForm() {
   })
 
   const onSubmit = async (data: FormData) => {
-    console.log(data)
-    // Handle form submission here
+    try {
+      await authService.register({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        password: data.password,
+        confirmPassword: data.confirmPassword,
+        role: 'PROFESSIONAL',
+      });
+      window.location.href = '/login/professional';
+    } catch (error: any) {
+      console.error('Registration failed:', error.message);
+    }
   }
 
   const strength = getStrength(pwValue)

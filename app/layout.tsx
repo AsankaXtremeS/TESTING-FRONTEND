@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import "./globals.css"
 import PageTransition from "@/components/layout/PageTransition"
+import { AuthProvider } from "@/context/AuthContext"
 
 export const metadata: Metadata = {
   title: "Talvio - Connecting Talent with Opportunity",
@@ -14,9 +15,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body><PageTransition>
-          {children}
-        </PageTransition></body>
+      <body>
+        <AuthProvider>
+          <PageTransition>
+            {children}
+          </PageTransition>
+        </AuthProvider>
+      </body>
     </html>
   )
 }

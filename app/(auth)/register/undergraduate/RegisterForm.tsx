@@ -8,13 +8,14 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Eye, EyeOff } from "lucide-react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { authService } from "@/lib/auth.service"
 
 const schema = z
   .object({
     firstName: z.string().min(2, "Required"),
     lastName: z.string().min(2, "Required"),
     email: z.string().email("Invalid email"),
-    university: z.string().min(2, "Required"),
     password: z.string().min(6, "Min 6 characters"),
     confirmPassword: z.string(),
     rememberMe: z.boolean().optional(),
@@ -50,18 +51,32 @@ export default function UndergraduateRegisterForm() {
   const [showPw, setShowPw] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [pwValue, setPwValue] = useState("")
+  const router = useRouter()
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
 
   const onSubmit = async (data: FormData) => {
-    console.log(data)
-    // Handle form submission here
+    try {
+      await authService.register({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        password: data.password,
+        confirmPassword: data.confirmPassword,
+        role: 'STUDENT',
+      })
+      router.push('/login/undergraduate')
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Registration failed. Please try again.'
+      console.error('Registration failed:', message)
+      alert(message)
+    }
   }
 
   const strength = getStrength(pwValue)
@@ -186,10 +201,11 @@ export default function UndergraduateRegisterForm() {
       {/* Get Started Button */}
       <button
         type="submit"
-        className="w-full py-2.5 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-shadow text-sm mt-3"
+        disabled={isSubmitting}
+        className="w-full py-2.5 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-shadow text-sm mt-3 disabled:opacity-50"
         style={{ background: "linear-gradient(90deg, #5F33E2 0%, #4F46E5 50%, #2563EB 100%)" }}
       >
-        Get started
+        {isSubmitting ? "Creating account..." : "Get started"}
       </button>
 
       {/* Divider */}
