@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
-import { useState } from "react"
+import { Suspense, useState } from "react"
 import Link from "next/link"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -10,7 +11,11 @@ import { Eye, EyeOff, ArrowLeft, CheckCircle } from "lucide-react"
 import { authService } from "@/lib/auth.service"
 
 const schema = z.object({
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(/[A-Z]/, "Must contain at least one uppercase letter")
+    .regex(/[0-9]/, "Must contain at least one number"),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords do not match",
@@ -37,12 +42,21 @@ const strengthMeta = [
 ]
 
 export default function ResetPasswordPage() {
+  return (
+    <Suspense>
+      <ResetPasswordForm />
+    </Suspense>
+  )
+}
+
+function ResetPasswordForm() {
   const searchParams = useSearchParams()
   const token = searchParams.get("token")
   const [success, setSuccess] = useState(false)
   const [showPw, setShowPw] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [pwValue, setPwValue] = useState("")
+  const [serverError, setServerError] = useState("")
 
   const {
     register,
@@ -54,10 +68,11 @@ export default function ResetPasswordPage() {
 
   const onSubmit = async (data: FormData) => {
     try {
+      setServerError("")
       await authService.resetPassword(token ?? '', data.password)
       setSuccess(true)
     } catch (error: any) {
-      console.error('Reset failed:', error.message)
+      setServerError(error.message || "This reset link is invalid or has expired. Please request a new one.")
     }
   }
 
@@ -86,7 +101,7 @@ export default function ResetPasswordPage() {
                   Your password has been reset successfully. You can now log in.
                 </p>
               </div>
-              <Link href="/">
+              <Link href="/login">
                 <button
                   className="w-full mt-2 text-white py-2.5 rounded-full font-medium transition"
                   style={{ background: "linear-gradient(90deg, #5F33E2 0%, #2563EB 60%, #2563EB 100%)" }}
@@ -175,6 +190,10 @@ export default function ResetPasswordPage() {
                   )}
                 </div>
 
+                {serverError && (
+                  <p className="text-sm text-center text-red-500">{serverError}</p>
+                )}
+
                 <button
                   type="submit"
                   disabled={isSubmitting}
@@ -187,7 +206,7 @@ export default function ResetPasswordPage() {
 
               <div className="mt-6 text-center">
                 <Link
-                  href="/"
+                  href="/login"
                   className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 transition"
                 >
                   <ArrowLeft className="w-4 h-4" />

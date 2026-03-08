@@ -69,7 +69,7 @@ export default function ForgotPasswordPage() {
                   Resend email
                 </button>
               </p>
-              <Link href="/">
+              <Link href="/login">
                 <button
                   className="w-full mt-2 text-white py-2.5 rounded-full font-medium transition disabled:opacity-50"
                   style={{ background: "linear-gradient(90deg, #5F33E2 0%, #2563EB 60%, #2563EB 100%)" }}
@@ -116,7 +116,7 @@ export default function ForgotPasswordPage() {
 
               <div className="mt-6 text-center">
                 <Link
-                  href="/"
+                  href="/login"
                   className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 transition"
                 >
                   <ArrowLeft className="w-4 h-4" />
