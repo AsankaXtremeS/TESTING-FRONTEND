@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import "./globals.css"
 import PageTransition from "@/components/layout/PageTransition"
+import Sidebar from "@/components/sidebar/SidebarLayout"
 
 export const metadata: Metadata = {
   title: "Talvio - Connecting Talent with Opportunity",
@@ -14,9 +15,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body><PageTransition>
+      <body className="flex min-h-screen">
+        <Sidebar />
+        <PageTransition>
           {children}
-        </PageTransition></body>
+        </PageTransition>
+      </body>
     </html>
   )
 }

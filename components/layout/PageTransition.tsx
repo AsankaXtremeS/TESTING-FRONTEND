@@ -11,7 +11,7 @@ export default function PageTransition({
   const pathname = usePathname()
 
   return (
-    <div className="relative min-h-screen bg-[#E9F3FD]">
+    <div className="flex-1 flex min-h-screen">
       <AnimatePresence mode="wait">
         <motion.div
           key={pathname}
@@ -19,7 +19,7 @@ export default function PageTransition({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="absolute inset-0"
+          className="flex-1 min-h-screen"
         >
           {children}
         </motion.div>
