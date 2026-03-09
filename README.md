@@ -37,3 +37,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 npm install react-hook-form zod @hookform/resolvers
 used for form validation
+
+Admin Credentials
+Email: admin@talvio.com
+Password: Admin@1234

@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import "./globals.css"
 import PageTransition from "@/components/layout/PageTransition"
-import Sidebar from "@/components/sidebar/SidebarLayout"
+import { AuthProvider } from "@/context/AuthContext"
 
 export const metadata: Metadata = {
   title: "Talvio - Connecting Talent with Opportunity",
@@ -15,11 +15,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="flex min-h-screen">
-        <Sidebar />
-        <PageTransition>
-          {children}
-        </PageTransition>
+      <body>
+        <AuthProvider>
+          <PageTransition>
+            {children}
+          </PageTransition>
+        </AuthProvider>
       </body>
     </html>
   )
