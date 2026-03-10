@@ -7,7 +7,7 @@ import {
   LayoutDashboard,
   Users,
   Briefcase,
-  CalendarCheck,
+  SquareUser,
   LogOut,
   Settings,
   PanelLeftClose,
@@ -46,7 +46,7 @@ const navItems: NavItem[] = [
   {
     label: "Interviews",
     href: "/users/employer/interviews",
-    icon: <CalendarCheck size={18} />,
+    icon: <SquareUser size={18} />,
   },
 ];
 
@@ -71,7 +71,7 @@ export default function EmployerLayout({
   return (
     <div className="flex h-screen overflow-hidden bg-[#F4F6FB] p-4 gap-4">
       <Sidebar />
-      <main className="flex-1 min-w-0 overflow-hidden flex flex-col">{children}</main>
+      <main className="flex flex-col flex-1 min-w-0 overflow-y-auto">{children}</main>
     </div>
   );
 }
@@ -168,7 +168,7 @@ function Sidebar({
       <nav className="flex-1 px-0 mt-5">
         {/* Label */}
         {!collapsed && (
-          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2 px-2">
+          <p className="text-[10px] font-medium text-gray-500 uppercase tracking-widest mb-2 px-2">
             Main Menu
           </p>
         )}
@@ -181,7 +181,7 @@ function Sidebar({
                 <Link
                   href={item.href}
                   className={`
-                    flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold
+                    flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
                     transition-all duration-150
                     ${
                       active
