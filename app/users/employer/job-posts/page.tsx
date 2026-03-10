@@ -65,7 +65,7 @@ export default function JobPostsPage() {
   };
 
   return (
-    <div className="flex flex-col h-full overflow-hidden p-8">
+    <div className="flex flex-col h-full p-8 overflow-hidden">
 
       {/* ── Fixed header section (filter + title + stats) ── */}
       <div className="flex-shrink-0">
@@ -80,7 +80,7 @@ export default function JobPostsPage() {
 
         {/* ── Page header ── */}
         <div className="flex items-center justify-between mt-6 mb-5">
-          <h1 className="flex items-center gap-2.5 text-2xl font-bold text-indigo-600">
+          <h1 className="flex items-center gap-2.5 text-3xl font-bold text-indigo-500">
             <Briefcase size={26} className="text-indigo-500" />
             Job Posts
           </h1>
@@ -104,7 +104,7 @@ export default function JobPostsPage() {
       </div>
 
       {/* ── Scrollable table area ── */}
-      <div className="flex-1 overflow-y-auto mt-6 pr-1">
+      <div className="flex-1 pr-1 mt-6 overflow-y-auto">
         {loading ? (
           <div className="p-12 text-sm text-center text-gray-400 bg-white border border-gray-100 rounded-2xl">
             Loading...
