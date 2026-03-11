@@ -2,25 +2,18 @@ import { JobStatus } from "@/types/employer/jobPost.types";
 
 interface JobStatusBadgeProps {
   status: JobStatus;
-  count?: number; // shown for Closed: "Closed (210)"
 }
 
-const styles: Record<JobStatus, string> = {
-  Draft:  "border border-yellow-400 text-yellow-600 bg-yellow-50",
-  Active: "border border-green-400 text-green-600 bg-green-50",
-  Closed: "border border-red-400 text-red-600 bg-red-50",
+const statusStyles: Record<JobStatus, string> = {
+  Active: "text-emerald-600 border-emerald-300 bg-emerald-50",
+  Draft: "text-amber-600 border-amber-300 bg-amber-50",
+  Closed: "text-red-600 border-red-300 bg-red-50",
 };
 
-export default function JobStatusBadge({ status, count }: JobStatusBadgeProps) {
+export default function JobStatusBadge({ status }: JobStatusBadgeProps) {
   return (
-    <span
-      className={`
-        inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
-        ${styles[status]}
-      `}
-    >
+    <span className={`text-xs font-semibold px-3 py-1 rounded-md border ${statusStyles[status]}`}>
       {status}
-      {status === "Closed" && count !== undefined && ` (${count})`}
     </span>
   );
 }

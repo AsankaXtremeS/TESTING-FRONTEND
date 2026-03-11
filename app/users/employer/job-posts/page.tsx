@@ -1,117 +1,94 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
-import { Plus, Briefcase } from "lucide-react";
-import { JobPost } from "@/types/employer/jobPost.types";
-import { getJobPosts } from "@/lib/employer/jobPosts.service";
-import FilterBar from "@/components/employer/job-posts/FilterBar";
+import { Plus, MessageSquareText } from "lucide-react";
+import { useState, useMemo } from "react";
+import FilterBar, { FilterValues } from "@/components/employer/job-posts/FilterBar";
 import StatsRow from "@/components/employer/job-posts/StatsRow";
 import JobPostsTable from "@/components/employer/job-posts/JobPostsTable";
 
-// ── Mock data so the page works before backend is ready ──
-const MOCK_POSTS: JobPost[] = [
-  { id: "1", title: "Frontend Developer", department: "Engineering", type: "Job",        closedDate: "Apr 26,2024", status: "Draft",  applicantsCount: 0   },
-  { id: "2", title: "UI/UX Designer",     department: "Design",      type: "Internship", closedDate: "Apr 26,2024", status: "Active", applicantsCount: 24  },
-  { id: "3", title: "Data Analyst",       department: "Engineering", type: "Job",        closedDate: "Apr 26,2024", status: "Active", applicantsCount: 12  },
-  { id: "4", title: "Marketing Intern",   department: "Marketing",   type: "Job",        closedDate: "Apr 26,2024", status: "Closed", applicantsCount: 210 },
-  { id: "5", title: "QA Engineer",        department: "Engineering", type: "Job",        closedDate: "Apr 26,2024", status: "Active", applicantsCount: 8   },
-  { id: "6", title: "Product Manager",    department: "Management",  type: "Job",        closedDate: "Apr 26,2024", status: "Active", applicantsCount: 16  },
+interface JobPost {
+  title: string;
+  dept: string;
+  type: string;
+  closed: string;
+  status: "Draft" | "Active" | "Closed";
+  closedCount?: number;
+}
+
+const jobs: JobPost[] = [
+  { title: "Frontend Developer", dept: "Engineering", type: "Job", closed: "Apr 26, 2024", status: "Draft" },
+  { title: "UI/UX Designer", dept: "Design", type: "Internship", closed: "Apr 26, 2024", status: "Active" },
+  { title: "Data Analyst", dept: "Engineering", type: "Job", closed: "Apr 26, 2024", status: "Active" },
+  { title: "Marketing Intern", dept: "Marketing", type: "Job", closed: "Apr 26, 2024", status: "Closed", closedCount: 210 },
+  { title: "QA Engineer", dept: "Engineering", type: "Job", closed: "Apr 26, 2024", status: "Active" },
+  { title: "Product Manager", dept: "Management", type: "Job", closed: "Apr 26, 2024", status: "Active" },
 ];
 
+const defaultFilters: FilterValues = {
+  search: "",
+  status: "All",
+  jobRole: "All",
+  sort: "Newest",
+  time: "All Time",
+};
+
 export default function JobPostsPage() {
-  const router = useRouter();
+  const [filters, setFilters] = useState<FilterValues>(defaultFilters);
 
-  const [posts, setPosts]     = useState<JobPost[]>(MOCK_POSTS);
-  const [loading, setLoading] = useState(false);
+  const filteredJobs = useMemo(() => {
+    let filtered = [...jobs];
 
-  // Filter state
-  const [search,  setSearch]  = useState("");
-  const [status,  setStatus]  = useState("Status");
-  const [jobRole, setJobRole] = useState("Job Role");
-  const [sort,    setSort]    = useState("Newest");
-  const [period,  setPeriod]  = useState("This Week");
-
-  // Uncomment when backend is ready:
-  // useEffect(() => {
-  //   setLoading(true);
-  //   getJobPosts().then(setPosts).finally(() => setLoading(false));
-  // }, []);
-
-  // ── Derived stats ──
-  const totalPosts    = posts.length;
-  const activePosts   = posts.filter((p) => p.status === "Active").length;
-  const applications  = posts.reduce((acc, p) => acc + (p.applicantsCount ?? 0), 0);
-  const closedPosts   = posts.filter((p) => p.status === "Closed").length;
-
-  // ── Client-side filtering ──
-  const filtered = useMemo(() => {
-    return posts
-      .filter((p) => {
-        const matchSearch = p.title.toLowerCase().includes(search.toLowerCase());
-        const matchStatus = status === "Status" || p.status === status;
-        const matchRole   = jobRole === "Job Role" || p.department === jobRole;
-        return matchSearch && matchStatus && matchRole;
-      })
-      .sort((a, b) =>
-        sort === "Newest"
-          ? b.id.localeCompare(a.id)
-          : a.id.localeCompare(b.id)
+    // Search filter
+    if (filters.search) {
+      filtered = filtered.filter(post =>
+        post.title.toLowerCase().includes(filters.search.toLowerCase())
       );
-  }, [posts, search, status, jobRole, sort]);
+    }
 
-  const handleEdit = (id: string) => {
-    router.push(`/users/employer/job-posts/${id}/edit`);
-  };
+    // Status filter
+    if (filters.status !== "All") {
+      filtered = filtered.filter(post => post.status === filters.status);
+    }
+
+    // Job Role filter (using dept as jobRole for this example)
+    if (filters.jobRole !== "All") {
+      filtered = filtered.filter(post => post.dept === filters.jobRole);
+    }
+
+    // Time filter (example: only "This Week")
+    if (filters.time === "This Week") {
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      filtered = filtered.filter(post => new Date(post.closed) >= oneWeekAgo);
+    }
+
+    // Sort
+    if (filters.sort === "Newest") {
+      filtered.sort((a, b) => new Date(b.closed).getTime() - new Date(a.closed).getTime());
+    } else {
+      filtered.sort((a, b) => new Date(a.closed).getTime() - new Date(b.closed).getTime());
+    }
+
+    return filtered;
+  }, [filters]);
 
   return (
-    <div className="flex flex-col h-full overflow-hidden p-8">
+    <div className="flex-1 bg-[#E9F3FD] min-h-screen overflow-auto">
+      <FilterBar filters={filters} onChange={setFilters} />
 
-      {/* ── Fixed header section (filter + title + stats) ── */}
-      <div className="flex-shrink-0">
-        {/* ── Filter bar (top) ── */}
-        <FilterBar
-          search={search}       onSearchChange={setSearch}
-          status={status}       onStatusChange={setStatus}
-          jobRole={jobRole}     onJobRoleChange={setJobRole}
-          sort={sort}           onSortChange={setSort}
-          period={period}       onPeriodChange={setPeriod}
-        />
-
-        {/* ── Page header ── */}
-        <div className="flex items-center justify-between mt-6 mb-5">
-          <h1 className="flex items-center gap-2.5 text-2xl font-bold text-indigo-600">
-            <Briefcase size={26} className="text-indigo-500" />
-            Job Posts
+      <div className="p-7">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
+            <span>< MessageSquareText /></span> Job Posts
           </h1>
-          <button
-            onClick={() => router.push("/users/employer/job-posts/new")}
-            className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700
-                       text-white text-sm font-semibold rounded-xl transition-colors shadow-sm"
-          >
+          <button className="flex items-center gap-2 bg-indigo-700 hover:bg-indigo-800 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">
             <Plus size={16} />
             Post New Job
           </button>
         </div>
 
-        {/* ── Stats row ── */}
-        <StatsRow
-          totalPosts={totalPosts}
-          active={activePosts}
-          applications={applications}
-          closed={closedPosts}
-        />
-      </div>
-
-      {/* ── Scrollable table area ── */}
-      <div className="flex-1 overflow-y-auto mt-6 pr-1">
-        {loading ? (
-          <div className="p-12 text-sm text-center text-gray-400 bg-white border border-gray-100 rounded-2xl">
-            Loading...
-          </div>
-        ) : (
-          <JobPostsTable posts={filtered} onEdit={handleEdit} />
-        )}
+        <StatsRow />
+        <JobPostsTable jobs={filteredJobs} />
       </div>
     </div>
   );

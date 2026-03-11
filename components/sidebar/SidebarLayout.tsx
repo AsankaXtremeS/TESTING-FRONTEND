@@ -18,10 +18,10 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: "Dashboard", href: "/dashboard/employer", icon: LayoutDashboard },
-  { label: "Candidates", href: "/dashboard/employer/candidates", icon: Users },
-  { label: "Job Posts", href: "/dashboard/employer/job-posts", icon: MessageSquare },
-  { label: "Interviews", href: "/dashboard/employer/interviews", icon: CalendarDays },
+  { label: "Dashboard", href: "/users/employer/dashboard", icon: LayoutDashboard },
+  { label: "Candidates", href: "/users/employer/candidates", icon: Users },
+  { label: "Job Posts", href: "/users/employer/job-posts", icon: MessageSquare },
+  { label: "Interviews", href: "/users/employer/interviews", icon: CalendarDays },
 ];
 
 export default function Sidebar() {

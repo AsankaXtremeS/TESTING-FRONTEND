@@ -1,64 +1,64 @@
-import { FileText, ClipboardList, FileCheck, XSquare } from "lucide-react";
+import { ClipboardList, CheckCircle, FileText, XCircle } from "lucide-react";
 
-interface Stat {
+interface StatCard {
   label: string;
-  value: number | string;
+  value: string;
   icon: React.ReactNode;
   bg: string;
 }
 
-interface StatsRowProps {
-  totalPosts: number;
-  active: number;
-  applications: number;
-  closed: number;
-}
+const statCards: StatCard[] = [
+  {
+    label: "Total Posts",
+    value: "32",
+    icon: <ClipboardList size={20} className="text-indigo-500" />,
+    bg: "bg-indigo-200",
+  },
+  {
+    label: "Active",
+    value: "08",
+    icon: <CheckCircle size={20} className="text-indigo-500" />,
+    bg: "bg-indigo-300",
+  },
+  {
+    label: "Applications",
+    value: "20",
+    icon: <FileText size={20} className="text-indigo-200" />,
+    bg: "bg-indigo-500",
+  },
+  {
+    label: "Closed",
+    value: "04",
+    icon: <XCircle size={20} className="text-white opacity-70" />,
+    bg: "bg-indigo-700",
+  },
+];
 
-export default function StatsRow({
-  totalPosts,
-  active,
-  applications,
-  closed,
-}: StatsRowProps) {
-  const stats: Stat[] = [
-    {
-      label: "Total Posts",
-      value: totalPosts,
-      icon: <FileText size={20} className="text-white opacity-80" />,
-      bg: "bg-[#7C6FCD]",
-    },
-    {
-      label: "Active",
-      value: active,
-      icon: <ClipboardList size={20} className="text-white opacity-80" />,
-      bg: "bg-[#6B5FC0]",
-    },
-    {
-      label: "Applications",
-      value: applications,
-      icon: <FileCheck size={20} className="text-white opacity-80" />,
-      bg: "bg-[#5A4FB3]",
-    },
-    {
-      label: "Closed",
-      value: closed,
-      icon: <XSquare size={20} className="text-white opacity-80" />,
-      bg: "bg-[#4A3FA6]",
-    },
-  ];
-
+export default function StatsRow() {
   return (
-    <div className="grid grid-cols-4 gap-4">
-      {stats.map((stat) => (
+    <div className="grid grid-cols-4 gap-4 mb-6">
+      {statCards.map((card, index) => (
         <div
-          key={stat.label}
-          className={`${stat.bg} rounded-2xl p-5 text-white flex flex-col gap-3`}
+          key={card.label}
+          className={`${card.bg} rounded-2xl p-5 flex items-center justify-between`}
         >
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium opacity-90">{stat.label}</span>
-            {stat.icon}
+          <div>
+            <p
+              className={`text-xs font-medium mb-1 ${
+                index >= 2 ? "text-indigo-100" : "text-indigo-700"
+              }`}
+            >
+              {card.label}
+            </p>
+            <p
+              className={`text-4xl font-bold ${
+                index >= 2 ? "text-white" : "text-indigo-900"
+              }`}
+            >
+              {card.value}
+            </p>
           </div>
-          <span className="text-4xl font-bold">{stat.value}</span>
+          <div>{card.icon}</div>
         </div>
       ))}
     </div>

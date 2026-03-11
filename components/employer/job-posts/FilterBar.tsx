@@ -1,112 +1,139 @@
-"use client";
+import { useState } from "react";
+import { Search, ChevronDown } from "lucide-react";
 
-import { useState, useRef, useEffect } from "react";
-import { Search, ChevronDown, Check } from "lucide-react";
+const statusOptions = ["All", "Active", "Closed", "Draft"];
+const jobRoleOptions = ["All", "Job", "Internship"];
+const sortOptions = ["Newest", "Oldest"];
+const timeOptions = ["This Week", "This Month", "All Time"];
+
+export interface FilterValues {
+  search: string;
+  status: string;
+  jobRole: string;
+  sort: string;
+  time: string;
+}
 
 interface FilterBarProps {
-  search: string;
-  onSearchChange: (val: string) => void;
-  status: string;
-  onStatusChange: (val: string) => void;
-  jobRole: string;
-  onJobRoleChange: (val: string) => void;
-  sort: string;
-  onSortChange: (val: string) => void;
-  period: string;
-  onPeriodChange: (val: string) => void;
+  filters: FilterValues;
+  onChange: (filters: FilterValues) => void;
 }
 
-function Dropdown({
-  value,
-  onChange,
-  options,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  options: string[];
-}) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+export default function FilterBar({ filters, onChange }: FilterBarProps) {
+  const [open, setOpen] = useState<string | null>(null);
 
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
+  const handleDropdown = (name: string) => setOpen(open === name ? null : name);
+
+  const handleSelect = (name: keyof FilterValues, value: string) => {
+    onChange({ ...filters, [name]: value });
+    setOpen(null);
+  };
 
   return (
-    <div ref={ref} className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200
-                   rounded-xl text-sm text-gray-700 font-medium hover:border-indigo-300
-                   hover:bg-indigo-50 transition-colors focus:outline-none focus:ring-2
-                   focus:ring-indigo-300 whitespace-nowrap"
-      >
-        {value}
-        <ChevronDown
-          size={13}
-          className={`text-gray-400 transition-transform duration-200 ${
-            open ? "rotate-180" : ""
-          }`}
-        />
-      </button>
-
-      {open && (
-        <div className="absolute left-0 z-50 mt-1.5 min-w-[140px] bg-white border
-                        border-gray-100 rounded-xl shadow-lg overflow-hidden">
-          {options.map((opt) => (
-            <button
-              key={opt}
-              type="button"
-              onClick={() => { onChange(opt); setOpen(false); }}
-              className={`flex items-center justify-between w-full px-4 py-2.5 text-sm
-                          text-left transition-colors
-                          ${
-                            value === opt
-                              ? "bg-indigo-50 text-indigo-700 font-semibold"
-                              : "text-gray-700 hover:bg-gray-50"
-                          }`}
-            >
-              {opt}
-              {value === opt && <Check size={13} className="text-indigo-500" />}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default function FilterBar({
-  search, onSearchChange,
-  status, onStatusChange,
-  jobRole, onJobRoleChange,
-  sort, onSortChange,
-  period, onPeriodChange,
-}: FilterBarProps) {
-  return (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="bg-white border-b border-gray-100 px-7 py-3 flex items-center gap-3 relative">
       {/* Search */}
-      <div className="relative flex-1 min-w-[200px]">
-        <Search size={15} className="absolute text-gray-400 -translate-y-1/2 left-3 top-1/2" />
+      <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2 bg-white w-52">
+        <Search size={14} className="text-gray-400" />
         <input
           type="text"
           placeholder="Search Posts"
-          value={search}
-          onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-900
-                     placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white"
+          className="text-sm text-gray-600 bg-transparent outline-none flex-1 placeholder:text-gray-400"
+          value={filters.search}
+          onChange={e => onChange({ ...filters, search: e.target.value })}
         />
       </div>
 
-      <Dropdown value={status}  onChange={onStatusChange}  options={["Status", "Draft", "Active", "Closed"]} />
-      <Dropdown value={jobRole} onChange={onJobRoleChange} options={["Job Role", "Engineering", "Design", "Marketing", "Management"]} />
-      <Dropdown value={sort}    onChange={onSortChange}    options={["Newest", "Oldest"]} />
-      <Dropdown value={period}  onChange={onPeriodChange}  options={["This Week", "This Month", "All Time"]} />
+      {/* Status Dropdown */}
+      <div className="relative">
+        <button
+          className="flex items-center gap-1.5 border border-gray-200 rounded-xl px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors bg-white"
+          onClick={() => handleDropdown("status")}
+        >
+          {filters.status} <ChevronDown size={14} />
+        </button>
+        {open === "status" && (
+          <ul className="absolute z-10 mt-2 bg-white border rounded shadow w-32">
+            {statusOptions.map(option => (
+              <li
+                key={option}
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                onClick={() => handleSelect("status", option)}
+              >
+                {option}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {/* Job Role Dropdown */}
+      <div className="relative">
+        <button
+          className="flex items-center gap-1.5 border border-gray-200 rounded-xl px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors bg-white"
+          onClick={() => handleDropdown("jobRole")}
+        >
+          {filters.jobRole} <ChevronDown size={14} />
+        </button>
+        {open === "jobRole" && (
+          <ul className="absolute z-10 mt-2 bg-white border rounded shadow w-32">
+            {jobRoleOptions.map(option => (
+              <li
+                key={option}
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                onClick={() => handleSelect("jobRole", option)}
+              >
+                {option}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {/* Sort Dropdown */}
+      <div className="relative">
+        <button
+          className="flex items-center gap-1.5 border border-gray-200 rounded-xl px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors bg-white"
+          onClick={() => handleDropdown("sort")}
+        >
+          {filters.sort} <ChevronDown size={14} />
+        </button>
+        {open === "sort" && (
+          <ul className="absolute z-10 mt-2 bg-white border rounded shadow w-32">
+            {sortOptions.map(option => (
+              <li
+                key={option}
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                onClick={() => handleSelect("sort", option)}
+              >
+                {option}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {/* Time Dropdown */}
+      <div className="relative">
+        <button
+          className="flex items-center gap-1.5 border border-gray-200 rounded-xl px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors bg-white"
+          onClick={() => handleDropdown("time")}
+        >
+          {filters.time} <ChevronDown size={14} />
+        </button>
+        {open === "time" && (
+          <ul className="absolute z-10 mt-2 bg-white border rounded shadow w-32">
+            {timeOptions.map(option => (
+              <li
+                key={option}
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                onClick={() => handleSelect("time", option)}
+              >
+                {option}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }
