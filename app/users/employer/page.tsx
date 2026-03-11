@@ -1,3 +1,6 @@
-export default function EmployerDashboard() {
-  return <div>Employer Dashboard</div>;
+import { redirect } from "next/navigation";
+
+// /users/employer → redirect to dashboard
+export default function EmployerRootPage() {
+  redirect("/users/employer/dashboard");
 }
